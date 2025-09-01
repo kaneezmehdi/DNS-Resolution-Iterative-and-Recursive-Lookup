@@ -1,0 +1,75 @@
+README
+## We made the following changes in the original code 
+1.  We implemented UDP Query in `send_dns_query`
+   The original  code had a TODO to send the query via UDP. I implemented it using:
+    
+     response = dns.query.udp(query, server, timeout=TIMEOUT)
+   
+   - This will ensure that  the query is actually sent and processed by the DNS server.
+
+2. We resolved Nameservers in `extract_next_nameservers`
+   - The original code had a TODO to resolve NS hostnames to IPs. We  completed this by using `dns.resolver.resolve()`:
+    
+     answers = dns.resolver.resolve(ns_name)
+    
+   - This step allows the resolver to progress beyond root servers.
+
+3. We updated Iterative Resolution Stages
+   - We added logic to transition from ROOT → TLD → AUTH stages in `iterative_dns_lookup`:
+    
+     if stage == "ROOT":
+         stage = "TLD"
+     elif stage == "TLD":
+         stage = "AUTH"
+    
+   - This helps to track the progression of resolution.
+
+4.We tried to handle more exceptions in `recursive_dns_lookup`
+   - Added handling for specific errors like `NXDOMAIN` and `NoNameservers`:
+
+     except dns.resolver.NXDOMAIN:
+         print(f"[ERROR] The domain {domain} does not exist.")
+   
+   - This will Improve robustness of the recursive resolver.
+
+5. We removed Unnecessary Early `return` in Iterative Lookup.
+   - Instead of stopping after a failed query, we used `continue` to try other root servers.
+   - This will increase the chances of resolving a domain successfully.
+
+
+
+## steps to run the code
+
+##Running the code  in VS Code
+1.Ensure you have python3 .Check with the line
+sh
+python3 --version
+
+2.install dns python libraru using the 
+sh
+pip3 install dnspython
+
+3. Run the following command based on the mode you want:
+
+  For Iterative DNS Resolution:
+  sh
+   python3 dns_server.py iterative example.com
+   
+   For Recursive DNS Resolution:
+   sh
+   python3 dns_server.py recursive example.com
+  
+## Usage
+## Arguments
+- `iterative` → Performs iterative DNS resolution.
+- `recursive` → Performs recursive DNS resolution.
+- `<domain>` → The domain name to resolve.
+
+##Contributions by each member out of 100
+Each one of us contributed eually complete the assignment
+Udbhav Singh Sikarwar -33.33%
+Ayush-33.33%
+Kaneez Fatima-33.33%
+
+
+
